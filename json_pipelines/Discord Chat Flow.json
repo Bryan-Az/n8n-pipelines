@@ -1,0 +1,254 @@
+{
+  "name": "Discord Chat Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "guildId": {
+          "__rl": true,
+          "value": "1300556134658211903",
+          "mode": "list",
+          "cachedResultName": "Aljebrya's server",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1300556134658211906",
+          "mode": "list",
+          "cachedResultName": "general",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903/1300556134658211906"
+        },
+        "limit": 1,
+        "options": {}
+      },
+      "id": "d91b4ddd-1299-40c1-8f56-aa6f9deadadb",
+      "name": "Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        900,
+        340
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "Mbshgdsxm1GwdXnE",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0f314ced-7e95-4501-8bf7-fad97a7e52d7",
+              "leftValue": "={{ $json.mentions[0].username }}",
+              "rightValue": "=ChatAgentTest",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "096da9ec-269f-45de-9e0b-a8f716903a22",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fd8dbc57-e747-4f42-94aa-9d72409153a0",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1300556134658211903",
+          "mode": "list",
+          "cachedResultName": "Aljebrya's server",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1300556134658211906",
+          "mode": "list",
+          "cachedResultName": "general",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903/1300556134658211906"
+        },
+        "content": "={{ $json.output }}",
+        "options": {}
+      },
+      "id": "e05a3ef2-212e-4a3f-9e75-b75328031e7e",
+      "name": "Discord1",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        500
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "Mbshgdsxm1GwdXnE",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 10
+            }
+          ]
+        }
+      },
+      "id": "90895b1d-d354-48eb-a81d-d4391c3d6468",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        620,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "channel_id",
+        "contextWindowLength": 100
+      },
+      "id": "1c6e6735-53f1-4c48-adb1-deaf4e76633a",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1740,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "assistant",
+        "assistantId": {
+          "__rl": true,
+          "value": "asst_uJChu64ApCqZVe1taln729Md",
+          "mode": "list",
+          "cachedResultName": "Gato"
+        },
+        "prompt": "define",
+        "text": "=<Instruction>\nConsider asking them a question in response after responding to the message to continue the conversation. Don't include the <@id> descriptor in the message.\n</Instruction> \n\n<User Message>\n{{ $json.content }}\n</User Message>",
+        "options": {}
+      },
+      "id": "cdd48cdb-1d97-4fe2-a205-6c4263993791",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1640,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "9NDgqvL8zukfoWgQ",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Discord": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Discord1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "e07c614f-4452-4379-8d01-5dfebe9fdc26",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a7950815a7e8f70919f11bf03425eaaf2c37682cb8764f011a3778c4614f5b5e"
+  },
+  "id": "Vv8wJzNVPG5Rgf4i",
+  "tags": []
+}
