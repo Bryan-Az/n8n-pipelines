@@ -1,0 +1,100 @@
+{
+  "name": "File-Edit Notification Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1JWMRsDeewxZyhmMViKiKG6A56vt_Ultw",
+          "mode": "list",
+          "cachedResultName": "CMPE Masters Project",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1JWMRsDeewxZyhmMViKiKG6A56vt_Ultw"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "id": "794ad12b-5fb2-4019-a570-9cc48376f70b",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        760,
+        520
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "GZSWx0FVmlpLRKGa",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1300556134658211903",
+          "mode": "list",
+          "cachedResultName": "Aljebrya's server",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1300556134658211906",
+          "mode": "list",
+          "cachedResultName": "general",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903/1300556134658211906"
+        },
+        "content": "={{ $json.name }} was modified recently by {{ $json.lastModifyingUser.displayName }} at {{ $json.modifiedTime }} <@101127558505959424>",
+        "options": {}
+      },
+      "id": "31f8ae50-2f8d-43c4-b6ea-f91b68dd2f04",
+      "name": "Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        520
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "Mbshgdsxm1GwdXnE",
+          "name": "Discord Bot account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ee7b4c09-28a2-4785-af7e-5453febc76fd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a7950815a7e8f70919f11bf03425eaaf2c37682cb8764f011a3778c4614f5b5e"
+  },
+  "id": "ddhkVdHsbRj97ftP",
+  "tags": []
+}

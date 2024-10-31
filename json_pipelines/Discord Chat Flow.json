@@ -140,15 +140,28 @@
       "parameters": {
         "sessionIdType": "customKey",
         "sessionKey": "channel_id",
-        "contextWindowLength": 100
+        "contextWindowLength": 20
       },
       "id": "1c6e6735-53f1-4c48-adb1-deaf4e76633a",
       "name": "Window Buffer Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.2,
       "position": [
-        1740,
-        640
+        1420,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8eba850a-a389-4ef7-8a8e-42e6f05fbc4e",
+      "name": "Chat Memory Manager",
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "typeVersion": 1.1,
+      "position": [
+        1260,
+        620
       ]
     },
     {
@@ -161,7 +174,8 @@
           "cachedResultName": "Gato"
         },
         "prompt": "define",
-        "text": "=<Instruction>\nConsider asking them a question in response after responding to the message to continue the conversation. Don't include the <@id> descriptor in the message.\n</Instruction> \n\n<User Message>\n{{ $json.content }}\n</User Message>",
+        "text": "=<Instruction>\n1. Include the sender's and any other mentioned userid in the response: {{ $json.mentions }}\n3. Take the role of a young person and try to use funny and friendly slang words related to the context of the original message. Only ask a question iff there hasn't been a question asked in the past 3 messages. Keep your responses on the shorter side, declarative side and not interrogative.\n</Instruction> \n\n<User Message>\n{{ $json.content }}\n</User Message>",
+        "memory": "threadId",
         "options": {}
       },
       "id": "cdd48cdb-1d97-4fe2-a205-6c4263993791",
@@ -180,7 +194,25 @@
       }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "json": {
+          "timestamp": "2024-10-30T16:29:20.001-07:00",
+          "Readable date": "October 30th 2024, 4:29:20 pm",
+          "Readable time": "4:29:20 pm",
+          "Day of week": "Wednesday",
+          "Year": "2024",
+          "Month": "October",
+          "Day of month": "30",
+          "Hour": "16",
+          "Minute": "29",
+          "Second": "20",
+          "Timezone": "America/Los_Angeles (UTC-07:00)"
+        }
+      }
+    ]
+  },
   "connections": {
     "Discord": {
       "main": [
@@ -219,8 +251,19 @@
       "ai_memory": [
         [
           {
-            "node": "OpenAI1",
+            "node": "Chat Memory Manager",
             "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory Manager": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
             "index": 0
           }
         ]
@@ -238,13 +281,13 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "e07c614f-4452-4379-8d01-5dfebe9fdc26",
+  "versionId": "6692d3a9-0fcb-4eee-8e35-68a7959c5432",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "a7950815a7e8f70919f11bf03425eaaf2c37682cb8764f011a3778c4614f5b5e"
