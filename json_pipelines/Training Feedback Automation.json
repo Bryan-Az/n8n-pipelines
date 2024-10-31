@@ -1,0 +1,315 @@
+{
+  "name": "Training Feedback Automation with Usertask and Airtable",
+  "nodes": [
+    {
+      "parameters": {
+        "fromEmail": "bryanambzam@gmail.com",
+        "toEmail": "bryan.ambriz@sjsu.edu",
+        "subject": "Urgent: Poor Training Feedback",
+        "html": "=Dear Trainer's and HR Manager's,\n\nWe have received a training feedback rating of 1 star. It is crucial to address this issue promptly.\n\nUser submitting response : {{ $json.fields.Assignee.name }}\n\nWe recommend scheduling a meeting to discuss the feedback in detail and develop an action plan to improve the training program.\n\nBest regards,",
+        "options": {}
+      },
+      "id": "ec55cbd8-e863-4dea-b2fc-1834f9d27f13",
+      "name": "Send Email after WebHook",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [
+        1400,
+        400
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "smtp": {
+          "id": "qkPzHq6ABwbSSwcU",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableOAuth2Api",
+        "baseId": {
+          "__rl": true,
+          "value": "app5oMkBlD27sbXBn",
+          "mode": "id"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "tblCgPaCwS7QpR2fs",
+          "mode": "id"
+        },
+        "triggerField": "Created",
+        "additionalFields": {}
+      },
+      "id": "041632a5-280a-40bf-bf3b-ddf057cdb6a5",
+      "name": "Airtable Trigger2",
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        540,
+        880
+      ],
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "NXiBbp3c6039PVnO",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1300556134658211903",
+          "mode": "list",
+          "cachedResultName": "Aljebrya's server",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1300556134658211906",
+          "mode": "list",
+          "cachedResultName": "general",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903/1300556134658211906"
+        },
+        "content": "=Someone submitted bad feedback! :( \n\nFeedback: {{ $json.fields.Feedback }}\nStatus: {{ $json.fields.Status }}\nScore: {{ $json.fields.Score }}",
+        "options": {}
+      },
+      "id": "9cc2597f-d785-41aa-9cb1-c681ebeae88b",
+      "name": "Discord",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        680
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "ucQ7jZ2AvFMz7NXw",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1300556134658211903",
+          "mode": "list",
+          "cachedResultName": "Aljebrya's server",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1300556134658211906",
+          "mode": "list",
+          "cachedResultName": "general",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903/1300556134658211906"
+        },
+        "content": "=Someone submitted neutral feedback.\n\nFeedback: {{ $json.fields.Feedback }}\nStatus: {{ $json.fields.Status }}\nScore: {{ $json.fields.Score }}",
+        "options": {}
+      },
+      "id": "a7295b3a-41a6-412b-ac8f-fe99bb9b7d32",
+      "name": "Discord1",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        840
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "ucQ7jZ2AvFMz7NXw",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.fields.Score }}",
+                    "rightValue": 0
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Bad"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "2d1c10b8-0418-4dcf-aa53-41f0b75ccc08",
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.fields.Score }}",
+                    "rightValue": 1
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Neutral"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "d2be2a3f-32ae-4578-a9aa-4a8f2b19f08f",
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.fields.Score }}",
+                    "rightValue": 2
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Good"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f12d0516-43a2-4517-a633-60d809cd3413",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        900,
+        840
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "1300556134658211903",
+          "mode": "list",
+          "cachedResultName": "Aljebrya's server",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "1300556134658211906",
+          "mode": "list",
+          "cachedResultName": "general",
+          "cachedResultUrl": "https://discord.com/channels/1300556134658211903/1300556134658211906"
+        },
+        "content": "=Someone submitted good feedback! :)\n\nFeedback: {{ $json.fields.Feedback }}\nStatus: {{ $json.fields.Status }}\nScore: {{ $json.fields.Score }}",
+        "options": {}
+      },
+      "id": "758307bf-a027-481c-a89c-8dd8f5e5b270",
+      "name": "Discord2",
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        980
+      ],
+      "credentials": {
+        "discordBotApi": {
+          "id": "ucQ7jZ2AvFMz7NXw",
+          "name": "Discord Bot account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Airtable Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Email after WebHook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Discord1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Discord2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "749feb49-c386-4e7d-8274-97cd99cab974",
+  "meta": {
+    "templateId": "2277",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f66c1e1a3993e1798569944bcec9eaef6fe60d131419ab8e4c1d709e73b7e351"
+  },
+  "id": "67fetN5BGNQAvayZ",
+  "tags": []
+}
